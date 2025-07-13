@@ -1,15 +1,12 @@
 // Interface.
 import { WrappedPropertyDescriptor } from '../interface';
-// Type.
-import { PrototypeOf } from '../type';
 /**
  * @description The core abstraction class for wrapping properties.
  * @export
  * @abstract
  * @class WrapPropertyCore
- * @template {object | (new () => any)} T The type of the target object or class to wrap the property of the given `key`.
- * @template {Record<PropertyKey, any>} [O=T extends new () => T ? PrototypeOf<T> : T] The object type of captured `T`.
- * @template {keyof O extends string | symbol ? keyof O : never} [K=keyof O extends string | symbol ? keyof O : never] The key type of the property to wrap.
+ * @template {Record<PropertyKey, any>} O The type of the object.
+ * @template {keyof O} [K=keyof O] The key type of the property to wrap.
  * @template {boolean} [A=boolean] The type of active property.
  * @template {boolean} [F=boolean] The type of enabled property.
  * @template {boolean} [C=boolean] The type of configurable property.
@@ -18,9 +15,8 @@ import { PrototypeOf } from '../type';
  * @template {object | undefined} [R=undefined] The type of controller that controls the wrapping behavior.
  */
 export abstract class WrapPropertyCore<
-  T extends object | (new () => any),
-  O extends Record<PropertyKey, any> = T extends new () => T ? PrototypeOf<T> : T,
-  K extends keyof O extends string | symbol ? keyof O : never = keyof O extends string | symbol ? keyof O : never,
+  O extends Record<PropertyKey, any>,
+  K extends keyof O = keyof O,
   A extends boolean = boolean,
   F extends boolean = boolean,
   C extends boolean = boolean,
@@ -111,13 +107,13 @@ export abstract class WrapPropertyCore<
   protected abstract get privateKey(): PropertyKey;
 
   /**
-   * @description The target object of the property.
+   * @description The object of the property.
    * @protected
    * @abstract
    * @readonly
-   * @type {T}
+   * @type {O}
    */
-  protected abstract get target(): T;
+  protected abstract get object(): O;
   
   /**
    * @description Unwraps the property using previous descriptor.
