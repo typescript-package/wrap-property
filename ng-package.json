@@ -3,5 +3,6 @@
   "dest": "../../dist/wrap-property",
   "lib": {
     "entryFile": "src/public-api.ts"
-  }
+  },
+  "keepLifecycleScripts": true
 }
