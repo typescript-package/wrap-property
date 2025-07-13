@@ -1,5 +1,5 @@
 // Interface.
-import { WrappedPropertyDescriptor } from '../interface';
+import { WrappedPropertyDescriptor } from '@typedly/descriptor';
 /**
  * @description The core abstraction class for wrapping properties.
  * @export
