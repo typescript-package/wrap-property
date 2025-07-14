@@ -55,4 +55,29 @@ export class WrapProperty<
       key
     );
   }
+
+  public override activate(callback?: 'onGet' | 'onSet' | 'both'): this {
+    super.activate(callback);
+    return this;
+  }
+
+  public override deactivate(callback?: 'onGet' | 'onSet' | 'both'): this {
+    super.deactivate(callback);
+    return this;
+  }
+
+  public override disable(): this {
+    super.disable();
+    return this;
+  }
+
+  public override enable(): this {
+    super.enable();
+    return this;
+  }
+
+  public override unwrap(): this {
+    super.unwrap();
+    return this;
+  }
 }
