@@ -229,7 +229,7 @@ export abstract class WrapPropertyBase<
         const o = (this as O);
 
         // Get the previous value from previous descriptor or current value.
-        const previousValue = (controller.descriptor.privateKey as keyof O || (controller.descriptor.previousDescriptor as PropertyDescriptor)?.value) as O[K];
+        const previousValue = (o[controller.descriptor.privateKey as K] as O[K] || (controller.descriptor.previousDescriptor as PropertyDescriptor)?.value) as O[K];
 
         // Perform previous descriptor.
         controller.descriptor.previousDescriptor?.set && controller.descriptor.previousDescriptor.set.call(o, value);
@@ -282,7 +282,7 @@ export abstract class WrapPropertyBase<
       this.privateKey, {
         configurable: true,
         enumerable: false,
-        value: object[key],
+        value: object[key] || new (object as unknown as any).constructor()[key],
         writable: true
       }
     );
