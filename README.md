@@ -203,7 +203,7 @@ export class TestObject {
 
 The foundational class for wrapping properties.
 
-#### Customizing with WrapPropertyBase
+#### Customizing with `WrapPropertyBase`
 
 You can extend `WrapPropertyBase` to implement your own custom behavior:
 
