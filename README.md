@@ -30,6 +30,14 @@ A **lightweight** TypeScript package with for wrapping object properties.
 
 ## Installation
 
+### 1, Install peer dependencies
+
+```bash
+npm i @typedly/callback@1.0.0-beta.4 @typedly/controller@0.0.1-beta @typedly/descriptor@5.1.0-beta --save-peer
+```
+
+### 2. Install the package
+
 ```bash
 npm install @typescript-package/wrap-property --save-peer
 ```
