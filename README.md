@@ -13,7 +13,7 @@
 [![GitHub issues][typescript-package-badge-issues]][typescript-package-issues]
 [![GitHub license][typescript-package-badge-license]][typescript-package-license]
 
-A **lightweight** TypeScript package with for wrapping object properties.
+A **lightweight** TypeScript package for wrapping object properties.
 
 ## Table of contents
 
