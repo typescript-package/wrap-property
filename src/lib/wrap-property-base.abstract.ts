@@ -85,10 +85,10 @@ export abstract class WrapPropertyBase<
   }
 
   /**
-   * @description The target object of the property.
+   * @description The object of the property.
    * @protected
    * @readonly
-   * @type {T}
+   * @type {O}
    */
   protected get object(): O {
     return this.#object;
@@ -161,12 +161,60 @@ export abstract class WrapPropertyBase<
     this.#hasPrivateProperty(object) === false && this.#definePrivateProperty(object, key);
   }
 
+  protected enable(): this {
+    Object.assign(this.descriptor, {
+      ...this.descriptor,
+      ...{
+        enabled: true,
+      }
+    });
+    return this;
+  }
+
+  protected disable(): this {
+    Object.assign(this.descriptor, {
+      ...this.descriptor,
+      ...{
+        enabled: false,
+      }
+    });
+    return this;
+  }
+
+  protected activate(callback: 'onGet' | 'onSet' | 'both' = 'both'): this {
+    if (typeof this.descriptor.active === 'boolean') {
+      this.descriptor.active = true as A;
+    } else if (typeof this.descriptor.active === 'object') {
+      if (callback === 'both') {
+        this.descriptor.active.onGet = true;
+        this.descriptor.active.onSet = true;
+      } else {
+        this.descriptor.active[callback] = true;
+      }
+    }
+    return this;
+  }
+
+  protected deactivate(callback: 'onGet' | 'onSet' | 'both' = 'both'): this {
+    if (typeof this.descriptor.active === 'boolean') {
+      this.descriptor.active = false as A;
+    } else if (typeof this.descriptor.active === 'object') {
+      if (callback === 'both') {
+        this.descriptor.active.onGet = false;
+        this.descriptor.active.onSet = false;
+      } else {
+        this.descriptor.active[callback] = false;
+      }
+    }
+    return this;
+  }
+
   /**
    * @description Unwraps the property using previous descriptor.
-   * @public
+   * @protected
    * @returns {this} 
    */
-  public unwrap(): this {
+  protected unwrap(): this {
     const previousDescriptor = ((this.#controller ? this.#controller.descriptor : this.#descriptor) as D).previousDescriptor;
     previousDescriptor &&
       (
