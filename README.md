@@ -76,51 +76,63 @@ This example demonstrates how to intercept reads and writes for a property.
 ```typescript
 import { WrapProperty } from '@typescript-package/wrap-property';
 
-class Example {
-  public value = 1;
+class MyClass {
+  myProp = 'hello';
 }
 
-// Wrap the "value" property to log whenever it is accessed or set.
-new WrapProperty(
-  Example.prototype,
-  'value',
-  {
-    onGet(key, value) {
-      console.log(`Getting "${String(key)}":`, value);
-      return value;
-    },
-    onSet(newValue, oldValue, key) {
-      console.log(`Setting "${String(key)}":`, oldValue, '→', newValue);
-      return newValue;
-    },
-  }
-);
+const inst = new MyClass();
 
-const ex = new Example();
-ex.value = 42; // Logs: Setting "value": 1 → 42
-console.log(ex.value); // Logs: Getting "value": 42
+new WrapProperty(inst, 'myProp', {
+  onGet(key, previousValue, value) {
+    console.log(
+      `Accessed ${String(key)}`,
+      previousValue,
+      '→',
+      value
+    );
+    return value;
+  }
+});
+
+inst.myProp; // Logs: Accessed myProp hello → hello
+
 ```
 
-### 2. Wrapping a Property on a Class Constructor
+### 2. Wrapping a Property on a Class prototype
 
 You can pass a class constructor to wrap its prototype property:
 
 ```typescript
 import { WrapProperty } from '@typescript-package/wrap-property';
 
-class MyClass {
-  myProp = 'hello';
+
+export class Example {
+  public static readonly staticValue = 42;
+  public value = 1;
 }
 
-new WrapProperty(MyClass, 'myProp', {
-  onGet(key, value) {
-    console.log(`Accessed ${String(key)}`);
-    return value;
+// Wrap the "value" property to log whenever it is accessed or set.
+export const wrapped1 = new WrapProperty(
+  Example.prototype,
+  'value',
+  {
+    onGet(key, previousValue, value) {
+      console.log(`Getting "${String(key)}":`, value);
+      return value;
+    },
+    onSet(value, previousValue, key) {
+      console.log(`Setting "${String(key)}":`, previousValue, '→', value);
+      return value;
+    },
   }
-});
+);
 
-const inst = new MyClass();
-console.log(inst.myProp); // Logs: Accessed myProp
+const example = new Example();
+
+delete (example as any).value; // Remove the own property to ensure the wrap works.
+
+example.value = 42; // Logs: Setting "value": 1 → 42
+example.value; // Logs: Getting "value": 42
 ```
 
 ### 3. Customizing with WrapPropertyBase
@@ -130,10 +142,9 @@ You can extend `WrapPropertyBase` to implement your own custom behavior:
 ```typescript
 import { WrapPropertyBase } from '@typescript-package/wrap-property';
 
-class CustomLogger extends WrapPropertyBase<typeof obj, typeof obj, 'someKey'> {
-  protected wrap(object, key, descriptor) {
-    return super.wrap(object, key, {
-      ...descriptor,
+class CustomLogger extends WrapPropertyBase<typeof obj, 'someKey'> {
+  constructor(object: typeof obj, key: 'someKey') {
+    super(object, key, {
       onGet: (k, v) => {
         console.log(`Custom get for ${String(k)}: ${v}`);
         return v;
@@ -145,7 +156,33 @@ class CustomLogger extends WrapPropertyBase<typeof obj, typeof obj, 'someKey'> {
 const obj = { someKey: 123 };
 
 new CustomLogger(obj, 'someKey');
-console.log(obj.someKey); // Logs: Custom get for someKey: 123
+obj.someKey; // Logs: Custom get for someKey: 123
+```
+
+### 4. Multiple wrap and one unwrap
+
+```typescript
+import { WrapProperty } from '@typescript-package/wrap-property';
+
+export class TestObject {
+  firstName = 'First name';
+  lastName = 'Last name';
+  age = 1000;
+
+  constructor(param11: number, param22: string) {}
+}
+
+const object = new TestObject(0, 'test');
+
+let wrappedAgeFirst = new WrapProperty(object, 'age', { privateKey: '_age' });
+let wrappedAgeSecond = new WrapProperty(object, 'age', { privateKey: '__age' });
+let wrappedAgeThird = new WrapProperty(object, 'age', { privateKey: '___age' });
+
+wrappedAgeSecond.unwrap(); // Unwraps the last, the field __age is not connected. 
+
+object.age = 3000;
+
+console.debug(object.age); // 3000
 ```
 
 ## Contributing
