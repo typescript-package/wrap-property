@@ -1,6 +1,6 @@
 {
   "name": "@typescript-package/wrap-property",
-  "version": "0.0.1",
+  "version": "0.0.1-beta",
   "author": "wwwdev.io <dev@wwwdev.io>",
   "description": "A lightweight TypeScript package for wrapping object properties.",
   "license": "MIT",
