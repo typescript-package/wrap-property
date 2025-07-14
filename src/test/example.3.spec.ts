@@ -8,7 +8,6 @@ class CustomLogger extends WrapPropertyBase<typeof obj, 'someKey'> {
         return v;
       }
     });
-
     super.wrap(object, key);
   }
 }
