@@ -61,12 +61,12 @@ export abstract class WrapPropertyCore<
 
   /**
    * @description The controller that controls the wrapping behavior.
-   * @public
+   * @protected
    * @abstract
    * @readonly
    * @type {R}
    */
-  public get controller(): R {
+  protected get controller(): R {
     return undefined as R;
   }
 
@@ -117,11 +117,11 @@ export abstract class WrapPropertyCore<
   
   /**
    * @description Unwraps the property using previous descriptor.
-   * @public
+   * @protected
    * @abstract
    * @returns {this} 
    */
-  public abstract unwrap(): this;
+  protected abstract unwrap(): this;
   
   /**
    * @description Wraps the property with a private key using the specified key and descriptor.
