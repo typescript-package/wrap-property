@@ -2,7 +2,7 @@
 <a href="https://www.typescriptlang.org/">
   <img
     src="https://avatars.githubusercontent.com/u/189666396?s=150&u=9d55b1eb4ce258974ead76bf07ccf49ef0eb0ea7&v=4"
-    title="typescript-package/wrap-property - A lightweight TypeScript package with for wrapping object properties."
+    title="typescript-package/wrap-property - A lightweight TypeScript package for wrapping object properties."
   />
 </a>
 
@@ -20,6 +20,8 @@ A **lightweight** TypeScript package for wrapping object properties.
 - [Installation](#installation)
 - [Api](#api)
   - [`WrapProperty`](#wrapproperty)
+  - [`WrapPropertyBase`](#wrappropertybase)
+  - [`WrapPropertyCore`](#wrappropertycore)
 - [Contributing](#contributing)
 - [Support](#support)
 - [Code of Conduct](#code-of-conduct)
@@ -77,7 +79,7 @@ new WrapProperty(target, key, descriptor?)
 
 ### Usage
 
-### 1. Basic Property Wrapping
+#### 1. Basic Property Wrapping
 
 This example demonstrates how to intercept reads and writes for a property.
 
@@ -120,7 +122,7 @@ console.debug(inst.myProp); // hello
 
 ```
 
-### 2. Wrapping a Property on a Class prototype
+#### 2. Wrapping a Property on a Class prototype
 
 You can pass a class constructor to wrap its prototype property:
 
@@ -157,7 +159,51 @@ example.value = 42; // Logs: Setting "value": 1 → 42
 example.value; // Logs: Getting "value": 42
 ```
 
-### 3. Customizing with WrapPropertyBase
+#### 3. Multiple wrap and one unwrap
+
+```typescript
+import { WrapProperty } from '@typescript-package/wrap-property';
+
+export class TestObject {
+  firstName = 'First name';
+  lastName = 'Last name';
+  age = 1000;
+
+  constructor(param11: number, param22: string) {}
+}
+
+const object = new TestObject(0, 'test');
+
+let wrappedAgeFirst = new WrapProperty(object, 'age', { privateKey: '_age' });
+let wrappedAgeSecond = new WrapProperty(object, 'age', { privateKey: '__age' });
+let wrappedAgeThird = new WrapProperty(object, 'age', { privateKey: '___age' });
+
+wrappedAgeSecond.unwrap(); // Unwraps the second wrap, the field __age is not connected. 
+
+object.age = 3000;
+
+console.debug(object.age); // 3000
+```
+
+#### 4. Wrapping with custom controller
+
+```typescript
+import { WrapProperty } from '@typescript-package/wrap-property';
+
+export class TestObject {
+  firstName = 'First name';
+  lastName = 'Last name';
+  age = 1000;
+
+  constructor(param11: number, param22: string) {}
+}
+```
+
+### `WrapPropertyBase`
+
+The foundational class for wrapping properties.
+
+#### Customizing with WrapPropertyBase
 
 You can extend `WrapPropertyBase` to implement your own custom behavior:
 
@@ -182,31 +228,9 @@ new CustomLogger(obj, 'someKey');
 obj.someKey; // Logs: Custom get for someKey: 123
 ```
 
-### 4. Multiple wrap and one unwrap
+### `WrapPropertyCore`
 
-```typescript
-import { WrapProperty } from '@typescript-package/wrap-property';
-
-export class TestObject {
-  firstName = 'First name';
-  lastName = 'Last name';
-  age = 1000;
-
-  constructor(param11: number, param22: string) {}
-}
-
-const object = new TestObject(0, 'test');
-
-let wrappedAgeFirst = new WrapProperty(object, 'age', { privateKey: '_age' });
-let wrappedAgeSecond = new WrapProperty(object, 'age', { privateKey: '__age' });
-let wrappedAgeThird = new WrapProperty(object, 'age', { privateKey: '___age' });
-
-wrappedAgeSecond.unwrap(); // Unwraps the last, the field __age is not connected. 
-
-object.age = 3000;
-
-console.debug(object.age); // 3000
-```
+The core abstraction class for wrapping properties.
 
 ## Contributing
 
